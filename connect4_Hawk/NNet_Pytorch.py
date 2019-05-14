@@ -20,6 +20,8 @@ from torchvision import datasets, transforms
 
 from .Connect4NNet_Pytorch import Connect4NNet as onnet
 
+sys.setrecursionlimit(10000)
+
 args = dotdict({
     'lr': 0.001,
     'dropout': 0.3,
