@@ -6,6 +6,7 @@ import argparse
 from keras.models import *
 from keras.layers import *
 from keras.optimizers import *
+from keras.utils import plot_model
 
 class OthelloNNet():
     def __init__(self, game, args):
@@ -30,3 +31,5 @@ class OthelloNNet():
 
         self.model = Model(inputs=self.input_boards, outputs=[self.pi, self.v])
         self.model.compile(loss=['categorical_crossentropy','mean_squared_error'], optimizer=Adam(args.lr))
+
+        #plot_model(self.model, to_file='othello_keras_model.png')
