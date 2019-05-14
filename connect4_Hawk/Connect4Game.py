@@ -58,12 +58,20 @@ class Connect4Game(Game):
         # player = 1
         b = Board(self.r, self.c)
         b.pieces = np.copy(board)
-        winner = b.get4InaRow(player)
-        if winner != 0:
-            return winner
-        elif not b.has_legal_moves(player) and b.has_legal_moves(-1*player):
-            return -1
-        return 0
+        winstate = b.get_win_state()
+        if winstate[0]:
+            if winstate[1] is None:
+                # draw has very little value.
+                return 1e-4
+            elif winstate[1] == player:
+                return +1
+            elif winstate[1] == -player:
+                return -1
+            else:
+                raise ValueError('Unexpected winstate found: ', winstate)
+        else:
+            # 0 used to represent unfinished game.
+            return 0
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1

@@ -66,8 +66,8 @@ class Board():
                 # print(x)
                 # print(y)
                 moves.add(x)
-        if len(moves) == 0:
-            moves.add(self.c)
+        # if len(moves) == 0:
+        #     moves.add(self.c)
         return moves
 
     def has_legal_moves(self, color):
@@ -204,6 +204,20 @@ class Board():
     #     print("Num in a row is ",greatest)
     #     return greatest
     
+    def get_win_state(self):
+        for player in [-1, 1]:
+            # Check rows & columns for win
+            if self.get4InaRow(player):
+                return (True, player)
+        tie = True
+        for player in [-1,1]:
+            if len(self.get_legal_moves(player))!=0:
+                tie = False
+        if tie:
+            return (True,None)
+        else:
+            return (False,None)
+
     def get4InaRow(self,color):
         
         #horizantal

@@ -1,6 +1,10 @@
 import math
 import numpy as np
+import sys
+
 EPS = 1e-8
+
+
 
 class MCTS():
     """
@@ -46,6 +50,7 @@ class MCTS():
 
 
     def search(self, canonicalBoard):
+        #sys.setrecursionlimit(20000)
         """
         This function performs one iteration of MCTS. It is recursively called
         till a leaf node is found. The action chosen at each node is one that
