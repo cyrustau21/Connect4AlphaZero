@@ -149,6 +149,7 @@ class Coach():
     def loadTrainExamples(self):
         name = open("name.txt","r")
         fileName = name.read()
+        name.close()
         modelFile = os.path.join(self.args.load_folder_file[0], fileName)
         examplesFile = modelFile
         if not os.path.isfile(examplesFile):
