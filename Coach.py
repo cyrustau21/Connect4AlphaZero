@@ -132,6 +132,9 @@ class Coach():
                 self.nnet.save_checkpoint(folder=self.args.checkpoint, filename='best.pth.tar')                
 
     def getCheckpointFile(self, iteration):
+        name = open("trainingLatestName.txt","w+")
+        name.write("checkpoint_" + str(iteration) + ".pth.tar")
+        name.close()
         return 'checkpoint_' + str(iteration) + '.pth.tar'
 
     def saveTrainExamples(self, iteration):
@@ -144,8 +147,10 @@ class Coach():
         f.closed
 
     def loadTrainExamples(self):
-        modelFile = os.path.join(self.args.load_folder_file[0], self.args.load_folder_file[1])
-        examplesFile = modelFile+".examples"
+        name = open("name.txt","r")
+        fileName = name.read()
+        modelFile = os.path.join(self.args.load_folder_file[0], fileName)
+        examplesFile = modelFile
         if not os.path.isfile(examplesFile):
             print(examplesFile)
             r = input("File with trainExamples not found. Continue? [y|n]")

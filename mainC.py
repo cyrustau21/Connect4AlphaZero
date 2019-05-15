@@ -14,8 +14,8 @@ args = dotdict({
     'cpuct': 1,
 
     'checkpoint': './checkpoints/',
-    'load_model': False,
-    'load_folder_file': ('./temp','temp.pth.tar'),
+    'load_model': True,
+    'load_folder_file': ('./checkpoints','temp.pth.tar'),
     'numItersForTrainExamplesHistory': 20,
 
 })
