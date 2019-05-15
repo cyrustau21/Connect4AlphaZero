@@ -133,7 +133,7 @@ class Coach():
 
     def getCheckpointFile(self, iteration):
         name = open("name.txt","w+")
-        name.write("checkpoint_" + str(iteration) + ".pth.tar")
+        name.write("checkpoint_" + str(iteration) + ".pth.tar.examples")
         name.close()
         return 'checkpoint_' + str(iteration) + '.pth.tar'
 
