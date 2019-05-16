@@ -1,128 +1,39 @@
-"""
-    This module implements the game playing harness.
-"""
-# Andrew Edwards -- almostimplemented.com
-# =======================================
-# Harness for running a checkers match.
-#
-# Last updated: July 21, 2014
+from .board import Board
 
-from .checkers import checkers
-import agent
-import sys
+class Game:
 
-BLACK, WHITE = 0, 1
+	def __init__(self):
+		self.board = Board()
+		self.moves = []
+		self.consecutive_noncapture_move_limit = 40
+		self.moves_since_last_capture = 0
 
-def main():
+	def move(self, move):
+		if move not in self.get_possible_moves():
+			raise ValueError('The provided move is not possible')
 
-    B = checkers.CheckerBoard()
-    print("Black moves first.")
-    turn = 1
-    current_player = B.active
-    while not game_over(B):
-        print B
+		self.board = self.board.create_new_board_from_move(move)
+		self.moves.append(move)
+		self.moves_since_last_capture = 0 if self.board.previous_move_was_capture else self.moves_since_last_capture + 1
 
-        legal_moves = B.get_moves()
+		return self
 
-        if B.jump:
-            print "Make jump."
-            print ""
-        else:
-            print "Turn %i" % turn
-            print ""
+	def move_limit_reached(self):
+		return self.moves_since_last_capture >= self.consecutive_noncapture_move_limit
 
-        for (i, move) in enumerate(get_move_strings(B)):
-            print "Move " + str(i) + ": " + move
+	def is_over(self):
+		return self.move_limit_reached() or not self.get_possible_moves()
 
-        while True:
-            move_idx = raw_input("Enter your move number: ")
-            try:
-                move_idx = int(move_idx)
-            except ValueError:
-                print "Please input a valid move number."
-                continue
+	def get_winner(self):
+		if not self.board.count_movable_player_pieces(1):
+			return 2
+		elif not self.board.count_movable_player_pieces(2):
+			return 1
+		else:
+			return None
 
-            if move_idx in range(len(legal_moves)):
-                break
-            else:
-                print "Please input a valid move number."
-                continue
+	def get_possible_moves(self):
+		return self.board.get_possible_moves()
 
-        B.make_move(legal_moves[move_idx])
-
-        # If jumps remain, then the board will not update current player
-        if B.active == current_player:
-            print "Jumps must be taken."
-            continue
-        else:
-            current_player = B.active
-            turn += 1
-
-        print B
-        if B.active == WHITE:
-            print "Congrats Black, you win!"
-        else:
-            print "Congrats White, you win!"
-
-        return 0
-
-def game_over(board):
-    return len(board.get_moves()) == 0
-
-def get_move_strings(board):
-    rfj = board.right_forward_jumps()
-    lfj = board.left_forward_jumps()
-    rbj = board.right_backward_jumps()
-    lbj = board.left_backward_jumps()
-
-    if (rfj | lfj | rbj | lbj) != 0:
-        rfj = [(1 + i - i//9, 1 + (i + 8) - (i + 8)//9)
-                    for (i, bit) in enumerate(bin(rfj)[::-1]) if bit == '1']
-        lfj = [(1 + i - i//9, 1 + (i + 10) - (i + 8)//9)
-                    for (i, bit) in enumerate(bin(lfj)[::-1]) if bit == '1']
-        rbj = [(1 + i - i//9, 1 + (i - 8) - (i - 8)//9)
-                    for (i, bit) in enumerate(bin(rbj)[::-1]) if bit ==  '1']
-        lbj = [(1 + i - i//9, 1 + (i - 10) - (i - 10)//9)
-                    for (i, bit) in enumerate(bin(lbj)[::-1]) if bit == '1']
-
-        if board.active == BLACK:
-            regular_moves = ["%i to %i" % (orig, dest) for (orig, dest) in rfj + lfj]
-            reverse_moves = ["%i to %i" % (orig, dest) for (orig, dest) in rbj + lbj]
-            return regular_moves + reverse_moves
-        else:
-            reverse_moves = ["%i to %i" % (orig, dest) for (orig, dest) in rfj + lfj]
-            regular_moves = ["%i to %i" % (orig, dest) for (orig, dest) in rbj + lbj]
-            return reverse_moves + regular_moves
-
-
-    rf = board.right_forward()
-    lf = board.left_forward()
-    rb = board.right_backward()
-    lb = board.left_backward()
-
-    rf = [(1 + i - i//9, 1 + (i + 4) - (i + 4)//9)
-                for (i, bit) in enumerate(bin(rf)[::-1]) if bit == '1']
-    lf = [(1 + i - i//9, 1 + (i + 5) - (i + 5)//9)
-                for (i, bit) in enumerate(bin(lf)[::-1]) if bit == '1']
-    rb = [(1 + i - i//9, 1 + (i - 4) - (i - 4)//9)
-                for (i, bit) in enumerate(bin(rb)[::-1]) if bit ==  '1']
-    lb = [(1 + i - i//9, 1 + (i - 5) - (i - 5)//9)
-                for (i, bit) in enumerate(bin(lb)[::-1]) if bit == '1']
-
-    if board.active == BLACK:
-        regular_moves = ["%i to %i" % (orig, dest) for (orig, dest) in rf + lf]
-        reverse_moves = ["%i to %i" % (orig, dest) for (orig, dest) in rb + lb]
-        return regular_moves + reverse_moves
-    else:
-        regular_moves = ["%i to %i" % (orig, dest) for (orig, dest) in rb + lb]
-        reverse_moves = ["%i to %i" % (orig, dest) for (orig, dest) in rf + lf]
-        return reverse_moves + regular_moves
-
-if __name__ == '__main__':
-    try:
-        status = main()
-        sys.exit(status)
-    except KeyboardInterrupt:
-        print ""
-        print "Game terminated."
-        sys.exit(1)
+	def whose_turn(self):
+		return self.board.player_turn

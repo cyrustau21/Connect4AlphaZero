@@ -2,7 +2,7 @@
 
 '''
 import numpy as np
-from checkers import Game 
+from .game import Game
 
 class Board():
 
@@ -15,38 +15,38 @@ class Board():
         self.n = n
         self.game = Game()
         self.pieces = np.zeros((self.n,self.n))
-        self.size = n*n/2
+        self.size = int(n*n/2)
         self.board = [0]*self.size
+        self.king = 2
 
 
     # add [][] indexer syntax to the Board
     def __getitem__(self, index): 
         return self.pieces[index]
 
-    def executeMove(self, action):
-        self.game.move(action)
+    def executeMove(self, move):
+        self.game.move(move)
 
     def updateBoard(self):
         self.board = [0]*self.size
         player = self.game.whose_turn()
-        if player == 2:
-            player = -1
+        p = self.game.whose_turn()
+        if p == 2:
+            p = -1
         for piece in self.game.board.pieces:
             if not piece.captured:
                 if piece.king and player==1:
-                    char = 2
+                    char = self.king
                 elif piece.king:
-                    char = -2
+                    char = -1*self.king
                 elif piece.player == player:
-                    char = player
+                    char = p
                 else:
-                    char = piece.player
-                    if char == 2:
-                        char = -1
+                    char = -1*p
                 self.board[piece.position-1] = char
 
     def getSize(self):
-        return self.n*self.n/2
+        return self.n*self.n//2
 
     def getWinner(self,player):
         p = player
@@ -56,7 +56,7 @@ class Board():
             notP = 2
         else:
             notP = 1
-        if not self.game.isOver():
+        if not self.game.is_over():
             return 0
         elif self.game.get_winner() == p:
             return 1
@@ -70,6 +70,7 @@ class Board():
     def curPlayer(self):
         return self.game.whose_turn()
     def getLegalMoves(self):
+        #print(self.game.get_possible_moves())
         return self.game.get_possible_moves()
 
 

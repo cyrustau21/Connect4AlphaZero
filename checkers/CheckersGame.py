@@ -1,4 +1,3 @@
-from .game import Game
 from .CheckersLogic import Board
 class CheckersGame():
     """
@@ -10,8 +9,9 @@ class CheckersGame():
 
     See othello/OthelloGame.py for an example implementation.
     """
-    def __init__(self):
-        self.b = Board(8)
+    def __init__(self,n):
+        self.b = Board(n)
+        self.n = n
 
     def getInitBoard(self):
         """
@@ -48,10 +48,15 @@ class CheckersGame():
             nextBoard: board after applying action
             nextPlayer: player who plays in the next turn (should be -player)
         """
+        print(action)
         move = self.actionToMove(action)
-        board.executeMove(move)
-        board.updateBoard()
-        return board.getBoard(),board.curPlayer()
+        print(move)
+        self.b.executeMove(move)
+        self.b.updateBoard()
+        player = self.b.curPlayer()
+        if player==2:
+            player = -1
+        return self.b.getBoard(),player
 
     def getValidMoves(self, board, player):
         """
@@ -64,8 +69,8 @@ class CheckersGame():
                         moves that are valid from the current board and player,
                         0 for invalid moves
         """
-        valids = [0]*self.getActionSize
-        moves = board.getLegalMoves()
+        valids = [0]*self.getActionSize()
+        moves = self.b.getLegalMoves()
         for move in moves:
             valids[self.moveToAction(move)] = 1
         return valids
@@ -81,7 +86,7 @@ class CheckersGame():
                small non-zero value for draw.
                
         """
-        return board.getWinner(player)
+        return self.b.getWinner(player)
 
 
     def getCanonicalForm(self, board, player):
@@ -98,12 +103,12 @@ class CheckersGame():
                             board as is. When the player is black, we can invert
                             the colors and return the board.
         """
-        board.updateBoard()
-        b = board.getBoard()
+        self.b.updateBoard()
+        b2 = self.b.getBoard()
         if player == -1:
-            for i in b:
-                b[i] = -1*b[i]
-        return b
+            for i in b2:
+                b2[i] = -1*b2[i]
+        return b2
 
     def getSymmetries(self, board, pi):
         """
@@ -129,60 +134,9 @@ class CheckersGame():
         """
         return board.toString()
 
-    def display(self,board):
-        #print(board.shape)
-        n = board.shape[0]
-        board.updateBoard()
-        pieces = board.getBoard()
-        print("   ",end="")
-        for y in range(n):
-            print (y,"|",end="")
-        print("")
-        print(" -----------------------")
-        for y in range(n):
-            print(y, "|",end="")    # print the row #
-            for x in range(n):
-                if y%2==0:
-                    if x%2 ==1:
-                        if x == n: print("-",end="")
-                        elif pieces[self.coordToPos((y,x))] == -1: 
-                            print("R  ",end="")
-                        elif pieces[self.coordToPos((y,x))] == 1: 
-                            print("B  ",end="")
-                        elif pieces[self.coordToPos((y,x))] == -2:
-                            print("RK  ",end="")
-                        elif pieces[self.coordToPos((y,x))] == 2: 
-                            print("BK  ",end="")
-                        else: 
-                            print("-  ",end="")
-                elif x==n:
-                    print("-",end="")
-                else:
-                    print("-  ",end="")
-                if y%2==1:
-                    if x%2 ==0:
-                        if x == n: print("-",end="")
-                        elif pieces[self.coordToPos((y,x))] == -1: 
-                            print("R  ",end="")
-                        elif pieces[self.coordToPos((y,x))] == 1: 
-                            print("B  ",end="")
-                        elif pieces[self.coordToPos((y,x))] == -2:
-                            print("RK  ",end="")
-                        elif pieces[self.coordToPos((y,x))] == 2: 
-                            print("BK  ",end="")
-                        else: 
-                            print("-  ",end="")
-                    elif x==n:
-                        print("-",end="")
-                    else:
-                        print("-  ",end="")
-                print("|")
-
-        print("   -----------------------")
-
     def getLegalMoves(self,board):
-        board.updateBoard()
-        moves = board.getLegalMoves()
+        self.b.updateBoard()
+        moves = self.b.getLegalMoves()
         coords = []
         for move in moves:
             coords.append(self.moveToCoords(move))
@@ -191,22 +145,70 @@ class CheckersGame():
     def moveToAction(self, move):
         return (move[0]-1)*32+(move[1]-1)
     def actionToMove(self,action):
-        start = action%32+1
-        end = action - 32*(start-1) + 1
-        return (start,end)
+        start = int(action/32)
+        end = action - 32*(start)
+        return [start,end]
     def coordToPos(self, coord):
         r = coord[0]
         c = coord[1]
-        if c%2==1:
-            c -=1
+        if not c==0:
+            c = int(c/2)
+
         return r*4+c
     def posToCoord(self, pos):
-        r = pos%4
-        c = pos - pos%4
+        r = int(pos/4)
+        if r%2==0:
+            c = 2*(pos%4)+1
+        else:
+            c = 2*(pos%4)
         return (r,c)
     def moveToCoords(self,move):
-        start = move[1]
+        start = move[0]
         end = move[1]
         return (self.posToCoord(start),self.posToCoord(end))
+
+    def curPlayer(self):
+        return self.b.curPlayer()
+
+        
+
+def display(board):
+    n = 8
+    king = 2
+    game = CheckersGame(8)
+    for y in range(n):
+        print (y,"|",end="")
+    print("")
+    print(" -----------------------")
+    for y in range(n):
+        print(y, "|",end="")    # print the row #
+        for x in range(n):
+            if y%2==0:
+                if x%2==1:
+                    i = game.coordToPos((y,x))
+                    piece = board[i]    # get the piece to print
+                else:
+                    piece = 0
+            else:
+                if x%2==0 and x<n-1:
+                    i = game.coordToPos((y,x))
+                    try:
+                        piece = board[i]    # get the piece to print
+                    except:
+                        print(i)
+                else:
+                    piece = 0
+            if piece == -1: print("R ",end="")
+            elif piece == 1: print("B ",end="")
+            elif piece == -1*king: print("RK",end="")
+            elif piece == king: print("BK",end="")
+            else:
+                if x==n:
+                    print("-",end="")
+                else:
+                    print("- ",end="")
+        print("|")
+
+    print("   -----------------------")
 
 

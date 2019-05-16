@@ -20,20 +20,22 @@ class HumanCheckersPlayer():
     def play(self, board):
         # display(board)
         print(self.game.getLegalMoves(board))
-        print("Enter your starting piece (row, column)")
-        
+        valids = self.game.getValidMoves(board,self.game.curPlayer())
         while True:
+            print("Enter your starting piece (row, column)")
             a = input()
             y,x = [int(x) for x in a.split(' ')]
-            a = 1+self.game.coordToPos(a)
+            start = 1+self.game.coordToPos((y,x))
             print("Enter your destination (row, column)")
             b = input()
-            y,x = [int(x) for x in a.split(' ')]
-            if valid[a]:
+            y,x = [int(x) for x in b.split(' ')]
+            end = 1+self.game.coordToPos((y,x))
+            action = self.game.moveToAction((start,end))
+            if valids[action]:
                 break
             else:
                 print('Invalid')
         
 
-        return a
+        return action
 

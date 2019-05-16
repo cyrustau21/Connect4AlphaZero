@@ -90,6 +90,9 @@ class Connect4Game(Game):
     def getSymmetries(self, board, pi):
         return [(board, pi), (board[:, ::-1], pi[::-1])]
 
+    def getPlayerI(self, curPlayer):
+        return curPlayer+1
+
 def display(board):
     #print(board.shape)
     n = board.shape[0]
