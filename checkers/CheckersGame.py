@@ -1,3 +1,4 @@
+from .game import Game
 class CheckersGame():
     """
     This class specifies the base Game class. To define your own game, subclass
@@ -9,7 +10,7 @@ class CheckersGame():
     See othello/OthelloGame.py for an example implementation.
     """
     def __init__(self):
-        pass
+        self.game = Game(8)
 
     def getInitBoard(self):
         """
@@ -24,7 +25,7 @@ class CheckersGame():
         Returns:
             (x,y): a tuple of board dimensions
         """
-        pass
+        return self.game.get_size()
 
     def getActionSize(self):
         """
