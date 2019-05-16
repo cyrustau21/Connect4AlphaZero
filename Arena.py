@@ -39,11 +39,7 @@ class Arena():
         curPlayer = 1
         board = self.game.getInitBoard()
         it = 0
-        first = True
-        action = -1
-        winner = 0
         while self.game.getGameEnded(board, curPlayer) == 0:
-            first = False
             it += 1
             if verbose:
                 assert (self.display)

@@ -62,7 +62,7 @@ class Connect4Game(Game):
         if winstate[0]:
             if winstate[1] is None:
                 # draw has very little value.
-                return 1e-4
+                return -.5
             elif winstate[1] == player:
                 return +1
             elif winstate[1] == -player:
