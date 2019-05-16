@@ -13,7 +13,7 @@ from torch.autograd import Variable
 class CheckersNNet(nn.Module):
     def __init__(self, game, args):
         # game params
-        self.board_x, self.board_y = game.getBoardSize()
+        self.board_x = game.getBoardSize()
         self.action_size = game.getActionSize()
         self.args = args
 
@@ -28,7 +28,7 @@ class CheckersNNet(nn.Module):
         self.bn3 = nn.BatchNorm2d(args.num_channels)
         self.bn4 = nn.BatchNorm2d(args.num_channels)
 
-        self.fc1 = nn.Linear(args.num_channels*(self.board_x-4)*(self.board_y-4), 1024)
+        self.fc1 = nn.Linear(args.num_channels*(self.board_x-4)*(self.board_x-4), 1024)
         self.fc_bn1 = nn.BatchNorm1d(1024)
 
         self.fc2 = nn.Linear(1024, 512)
