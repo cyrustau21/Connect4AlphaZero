@@ -18,6 +18,7 @@ class Board():
         self.size = int(n*n/2)
         self.board = [0]*self.size
         self.king = 2
+        self.updateBoard()
 
 
     # add [][] indexer syntax to the Board
@@ -25,6 +26,8 @@ class Board():
         return self.pieces[index]
 
     def executeMove(self, move):
+        self.getLegalMoves()
+        #print(move)
         self.game.move(move)
 
     def updateBoard(self):
@@ -66,11 +69,25 @@ class Board():
             return 1e-4
 
     def getBoard(self):
-        return self.board
+        self.updateBoard()
+        b = np.zeros((8,8))
+        for i in range(len(self.board)):
+            if not self.board[i] == 0:
+                coord = self.posToCoord(i)
+                b[coord[0]][coord[1]] = self.board[i]
+        return b
     def curPlayer(self):
         return self.game.whose_turn()
     def getLegalMoves(self):
-        #print(self.game.get_possible_moves())
+        print(self.game.get_possible_moves())
         return self.game.get_possible_moves()
+
+    def posToCoord(self, pos):
+        r = int(pos/4)
+        if r%2==0:
+            c = 2*(pos%4)+1
+        else:
+            c = 2*(pos%4)
+        return (r,c)
 
 

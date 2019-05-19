@@ -32,7 +32,7 @@ args = dotdict({
 class NNetWrapper(NeuralNet):
     def __init__(self, game):
         self.nnet = checknnet(game, args)
-        self.board_x, self.board_y = game.getBoardSize()
+        self.board_x = game.getBoardSize()
         self.action_size = game.getActionSize()
 
         if args.cuda:
@@ -113,9 +113,9 @@ class NNetWrapper(NeuralNet):
         start = time.time()
 
         # preparing input
-        board = torch.FloatTensor(board.astype(np.float64))
+        board = torch.FloatTensor(board)
         if args.cuda: board = board.contiguous().cuda()
-        board = board.view(1, self.board_x, self.board_y)
+        board = board.view(1,self.board_x,self.board_x)
         self.nnet.eval()
         with torch.no_grad():
             pi, v = self.nnet(board)

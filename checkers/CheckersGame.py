@@ -1,4 +1,5 @@
 from .CheckersLogic import Board
+import numpy as np
 class CheckersGame():
     """
     This class specifies the base Game class. To define your own game, subclass
@@ -19,8 +20,8 @@ class CheckersGame():
             startBoard: a representation of the board (ideally this is the form
                         that will be the input to your neural network)
         """
-        self.b.updateBoard()
-        return self.b.getBoard()
+        b = Board(8)
+        return b.getBoard()
 
 
     def getBoardSize(self):
@@ -28,14 +29,14 @@ class CheckersGame():
         Returns:
             (x,y): a tuple of board dimensions
         """
-        return self.b.getSize()
+        return self.n
 
     def getActionSize(self):
         """
         Returns:
             actionSize: number of all possible actions
         """
-        return 32*31
+        return 32*32
 
     def getNextState(self, board, player, action):
         """
@@ -49,9 +50,14 @@ class CheckersGame():
             nextPlayer: player who plays in the next turn (should be -player)
         """
         print(action)
+        self.b.updateBoard()
+        print("first player:"+str(self.curPlayer()))
         move = self.actionToMove(action)
         print(move)
+        print(self.b.getLegalMoves())
         self.b.executeMove(move)
+        print("next player:"+str(self.curPlayer()))
+        print(self)
         self.b.updateBoard()
         player = self.b.curPlayer()
         if player==2:
@@ -69,10 +75,15 @@ class CheckersGame():
                         moves that are valid from the current board and player,
                         0 for invalid moves
         """
+        print("Current player for board is:"+str(self.curPlayer()))
+        print("Current player given is:"+str(player))
+        print(str(self.b.getBoard()))
         valids = [0]*self.getActionSize()
         moves = self.b.getLegalMoves()
         for move in moves:
+            print(move)
             valids[self.moveToAction(move)] = 1
+
         return valids
 
     def getGameEnded(self, board, player):
@@ -103,12 +114,10 @@ class CheckersGame():
                             board as is. When the player is black, we can invert
                             the colors and return the board.
         """
-        self.b.updateBoard()
-        b2 = self.b.getBoard()
-        if player == -1:
-            for i in b2:
-                b2[i] = -1*b2[i]
-        return b2
+
+        
+        return self.b.getBoard()
+
 
     def getSymmetries(self, board, pi):
         """
@@ -132,7 +141,8 @@ class CheckersGame():
             boardString: a quick conversion of board to a string format.
                          Required by MCTS for hashing.
         """
-        return board.toString()
+        self.b.updateBoard()
+        return str(self.getCanonicalForm(board, 1))
 
     def getLegalMoves(self,board):
         self.b.updateBoard()
@@ -147,6 +157,8 @@ class CheckersGame():
     def actionToMove(self,action):
         start = int(action/32)
         end = action - 32*(start)
+        start+=1
+        end+=1
         return [start,end]
     def coordToPos(self, coord):
         r = coord[0]
@@ -170,12 +182,14 @@ class CheckersGame():
     def curPlayer(self):
         return self.b.curPlayer()
 
+    def updateBoard(self):
+        self.b.updateBoard()
+
         
 
 def display(board):
     n = 8
     king = 2
-    game = CheckersGame(8)
     for y in range(n):
         print (y,"|",end="")
     print("")
@@ -183,21 +197,7 @@ def display(board):
     for y in range(n):
         print(y, "|",end="")    # print the row #
         for x in range(n):
-            if y%2==0:
-                if x%2==1:
-                    i = game.coordToPos((y,x))
-                    piece = board[i]    # get the piece to print
-                else:
-                    piece = 0
-            else:
-                if x%2==0 and x<n-1:
-                    i = game.coordToPos((y,x))
-                    try:
-                        piece = board[i]    # get the piece to print
-                    except:
-                        print(i)
-                else:
-                    piece = 0
+            piece = board[y][x]
             if piece == -1: print("R ",end="")
             elif piece == 1: print("B ",end="")
             elif piece == -1*king: print("RK",end="")

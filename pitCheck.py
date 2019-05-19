@@ -1,5 +1,5 @@
 import Arena
-from MCTS import MCTS
+from CheckersMCTS import MCTS
 from checkers.CheckersGame import CheckersGame, display
 from checkers.CheckersPlayers import *
 # from othello.keras.NNet import NNetWrapper as NNet

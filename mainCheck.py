@@ -1,4 +1,4 @@
-from Coach import Coach
+from CheckersCoach import Coach
 from checkers.CheckersGame import CheckersGame as Game
 from checkers.NNet import NNetWrapper as nn
 from utils import *
