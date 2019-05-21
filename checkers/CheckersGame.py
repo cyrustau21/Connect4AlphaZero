@@ -13,6 +13,7 @@ class CheckersGame():
     def __init__(self,n):
         self.b = Board(n)
         self.n = n
+        self.startingBoard = [1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
 
     def getInitBoard(self):
         """
@@ -20,8 +21,13 @@ class CheckersGame():
             startBoard: a representation of the board (ideally this is the form
                         that will be the input to your neural network)
         """
-        b = Board(8)
-        return b.getBoard()
+        b = np.zeros((8,8))
+        for i in range(len(self.startingBoard)):
+            if not self.startingBoard[i] == 0:
+                coord = self.posToCoord(i)
+                #print(coord)
+                b[coord[0]][coord[1]] = self.startingBoard[i]
+        return b
 
 
     def getBoardSize(self):
@@ -49,20 +55,13 @@ class CheckersGame():
             nextBoard: board after applying action
             nextPlayer: player who plays in the next turn (should be -player)
         """
-        print(action)
-        self.b.updateBoard()
-        print("first player:"+str(self.curPlayer()))
+        if player == -1:
+            player == 2
+        self.b.boardToGame(board,player)
         move = self.actionToMove(action)
-        print(move)
-        print(self.b.getLegalMoves())
         self.b.executeMove(move)
-        print("next player:"+str(self.curPlayer()))
-        print(self)
-        self.b.updateBoard()
-        player = self.b.curPlayer()
-        if player==2:
-            player = -1
-        return self.b.getBoard(),player
+        return self.b.getBoard(),self.b.curPlayer()
+
 
     def getValidMoves(self, board, player):
         """
@@ -75,13 +74,16 @@ class CheckersGame():
                         moves that are valid from the current board and player,
                         0 for invalid moves
         """
-        print("Current player for board is:"+str(self.curPlayer()))
-        print("Current player given is:"+str(player))
-        print(str(self.b.getBoard()))
+        #print("Current player for board is:"+str(self.curPlayer()))
+        #print("Current player given is:"+str(player))
+        #print(str(self.b.getBoard()))
+        if player == -1:
+            player == 2
+        self.b.boardToGame(board,player)
         valids = [0]*self.getActionSize()
         moves = self.b.getLegalMoves()
         for move in moves:
-            print(move)
+            #print(move)
             valids[self.moveToAction(move)] = 1
 
         return valids
@@ -97,6 +99,7 @@ class CheckersGame():
                small non-zero value for draw.
                
         """
+        self.b.boardToGame(board,player)
         return self.b.getWinner(player)
 
 
@@ -114,9 +117,22 @@ class CheckersGame():
                             board as is. When the player is black, we can invert
                             the colors and return the board.
         """
+        print(board)
+        if player == -1:
+            board = np.asarray(player*board)
+            board = np.flipud(board)
+            board = np.fliplr(board)
+            b = np.zeros((8,8))
+            shape = board.shape
+            for r in range(shape[0]):
+                for c in range(shape[1]):
+                    b[r][c] = board[r][c]
+            return b
+        else:        
+            return board
 
-        
-        return self.b.getBoard()
+
+
 
 
     def getSymmetries(self, board, pi):
@@ -141,16 +157,8 @@ class CheckersGame():
             boardString: a quick conversion of board to a string format.
                          Required by MCTS for hashing.
         """
-        self.b.updateBoard()
-        return str(self.getCanonicalForm(board, 1))
+        return str(board)
 
-    def getLegalMoves(self,board):
-        self.b.updateBoard()
-        moves = self.b.getLegalMoves()
-        coords = []
-        for move in moves:
-            coords.append(self.moveToCoords(move))
-        return coords
 
     def moveToAction(self, move):
         return (move[0]-1)*32+(move[1]-1)
@@ -182,8 +190,7 @@ class CheckersGame():
     def curPlayer(self):
         return self.b.curPlayer()
 
-    def updateBoard(self):
-        self.b.updateBoard()
+
 
         
 

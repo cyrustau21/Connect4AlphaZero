@@ -45,6 +45,7 @@ class BoardSearcher:
 		return self.player_positions[player_number]
 
 	def get_pieces_in_play(self):
+		print(self.board.player_turn)
 		return self.player_pieces[self.board.player_turn] if not self.board.piece_requiring_further_capture_moves else [self.board.piece_requiring_further_capture_moves]
 
 	def get_piece_by_position(self, position):

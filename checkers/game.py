@@ -37,3 +37,9 @@ class Game:
 
 	def whose_turn(self):
 		return self.board.player_turn
+		
+	def getGameBoard(self):
+		return self.board
+
+	def setPlayer(self,player):
+		self.board.player_turn = player

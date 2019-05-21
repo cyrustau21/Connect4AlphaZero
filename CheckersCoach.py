@@ -40,6 +40,7 @@ class Coach():
         """
         trainExamples = []
         board = self.game.getInitBoard()
+        print(str(board))
         self.curPlayer = 1
         episodeStep = 0
 
@@ -47,16 +48,21 @@ class Coach():
             episodeStep += 1
             canonicalBoard = self.game.getCanonicalForm(board,self.curPlayer)
             temp = int(episodeStep < self.args.tempThreshold)
-            print("board to get moves: "+str(canonicalBoard))
+            #print("board to get moves: "+str(canonicalBoard))
             pi = self.mcts.getActionProb(canonicalBoard, temp=temp)
             sym = self.game.getSymmetries(canonicalBoard, pi)
             for b,p in sym:
                 trainExamples.append([b, self.curPlayer, p, None])
 
             action = np.random.choice(len(pi), p=pi)
-            print(trainExamples)
+            #print(trainExamples)
+            move = (self.game.actionToMove(action))
+            print(self.game.posToCoord(move[0]-1)+self.game.posToCoord(move[1]-1))
+            print(str(canonicalBoard))
+            #print(self.game.getLegalMoves(canonicalBoard))
+            print(self.curPlayer)
             board, self.curPlayer = self.game.getNextState(board, self.curPlayer, action)
-
+            print(str(board))
             r = self.game.getGameEnded(board, self.curPlayer)
 
             if r!=0:
@@ -85,7 +91,6 @@ class Coach():
                 for eps in range(self.args.numEps):
                     self.mcts = MCTS(self.game, self.nnet, self.args)   # reset search tree
                     iterationTrainExamples += self.executeEpisode()
-    
                     # bookkeeping + plot progress
                     eps_time.update(time.time() - end)
                     end = time.time()
@@ -127,13 +132,13 @@ class Coach():
             print('ACCEPTING NEW MODEL')
             self.nnet.save_checkpoint(folder=self.args.checkpoint, filename=self.getCheckpointFile(i))
             self.nnet.save_checkpoint(folder=self.args.checkpoint, filename='best.pth.tar') 
-            # if pwins+nwins == 0 or float(nwins)/(pwins+nwins) < self.args.updateThreshold:
-            #     print('REJECTING NEW MODEL')
-            #     self.nnet.load_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
-            # else:
-            #     print('ACCEPTING NEW MODEL')
-            #     self.nnet.save_checkpoint(folder=self.args.checkpoint, filename=self.getCheckpointFile(i))
-            #     self.nnet.save_checkpoint(folder=self.args.checkpoint, filename='best.pth.tar')                
+            if pwins+nwins == 0 or float(nwins)/(pwins+nwins) < self.args.updateThreshold:
+                print('REJECTING NEW MODEL')
+                self.nnet.load_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
+            else:
+                print('ACCEPTING NEW MODEL')
+                self.nnet.save_checkpoint(folder=self.args.checkpoint, filename=self.getCheckpointFile(i))
+                self.nnet.save_checkpoint(folder=self.args.checkpoint, filename='best.pth.tar')                
 
     def getCheckpointFile(self, iteration):
         name = open("name.txt","w+")

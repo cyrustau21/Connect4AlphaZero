@@ -107,8 +107,8 @@ def display(board):
         for x in range(board.shape[1]):
             #print(x)
             piece = board[y][x]    # get the piece to print
-            if piece == -1: print("B  ",end="")
-            elif piece == 1: print("R  ",end="")
+            if piece == -1: print("X  ",end="")
+            elif piece == 1: print("O  ",end="")
             else:
                 if x==board.shape[1]:
                     print("-",end="")

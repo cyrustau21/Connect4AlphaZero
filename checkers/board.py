@@ -22,8 +22,7 @@ class Board:
 
 	def get_possible_moves(self):
 		capture_moves = self.get_possible_capture_moves()
-
-		return capture_moves if capture_moves else self.get_possible_positional_moves()
+		return capture_moves.extend(self.get_possible_positional_moves()) if capture_moves else self.get_possible_positional_moves()
 
 	def get_possible_capture_moves(self):
 		return reduce((lambda moves, piece: moves + piece.get_possible_capture_moves()), self.searcher.get_pieces_in_play(), [])
