@@ -21,8 +21,6 @@ class Board():
 
         self.r = r
         self.c = c
-        self.lastMoveW = (-1,-1)
-        self.lastMoveB = (-1,-1)
         # Create the empty board array.
         self.pieces = np.zeros((r,c))
         #print(self.pieces)
@@ -44,7 +42,7 @@ class Board():
         return count
     
     def findFirstUnoccupied(self,x):
-        #increment loop and return column value wh
+        #increment loop and return row value
         #print(self[5][6])
         for y in range(self.r-1,-1,-1):
             if self[y][x] == 0.0:

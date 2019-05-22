@@ -1,6 +1,8 @@
 import numpy as np
+import game
 from pytorch_classification.utils import Bar, AverageMeter
 import time
+import tkinter as tk
 
 
 class Arena():
@@ -8,7 +10,7 @@ class Arena():
     An Arena class where any 2 agents can be pit against each other.
     """
 
-    def __init__(self, player1, player2, game, display=None):
+    def __init__(self, player1, player2, game,display=None):
         """
         Input:
             player 1,2: two functions that takes board as input, return action
@@ -125,4 +127,3 @@ class Arena():
         bar.finish()
 
         return oneWon, twoWon, draws
-
