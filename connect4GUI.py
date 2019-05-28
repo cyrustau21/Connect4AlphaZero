@@ -111,12 +111,18 @@ class Game(Canvas):
                 self.setPlayer()
                 self.color = "yellow"
             print(str(self.board))
-            result = self.game.getGameEnded(self.board,self.humanPlayer)
+            result = self.game.getGameEnded(self.board,1)
             if result == 1:
-                info.t.config(text="Human wins")
+                if result == self.humanPlayer:
+                    info.t.config(text="Human wins")
+                else:
+                    info.t.config(text="AI wins")
                 self.perm = False
             elif result == -1:
-                info.t.config(text="AI wins")
+                if result == self.ai_ind:
+                    info.t.config(text="AI wins")
+                else:
+                    info.t.config(text="Human wins")
                 self.perm = False
             elif result == -.5:
                 info.t.config(text="Tie")
