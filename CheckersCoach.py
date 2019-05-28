@@ -46,6 +46,7 @@ class Coach():
 
         while True:
             episodeStep += 1
+            print("Getting canonical board for: "+str(self.curPlayer))
             canonicalBoard = self.game.getCanonicalForm(board,self.curPlayer)
             temp = int(episodeStep < self.args.tempThreshold)
             #print("board to get moves: "+str(canonicalBoard))

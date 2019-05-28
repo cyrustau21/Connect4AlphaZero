@@ -57,6 +57,11 @@ class Game(Canvas):
         args1 = dotdict({'numMCTSSims': 50, 'cpuct':1.0})
         mcts1 = MCTS(self.game, n1, args1)
         self.n1p = lambda x: np.argmax(mcts1.getActionProb(x, temp=0))
+        # n2 = NNet(self.game)
+        # n2.load_checkpoint('./checkpoints','best.pth.tar')
+        # args2 = dotdict({'numMCTSSims': 50, 'cpuct':1.0})
+        # mcts2 = MCTS(self.game, n2, args2)
+        # self.n2p = lambda x: np.argmax(mcts2.getActionProb(x, temp=0))
         if self.ai_player == 2:
             self.ai_ind = -1
         else:
@@ -83,11 +88,9 @@ class Game(Canvas):
             r = b.findFirstUnoccupied(col)
             if self.player == 2:
                 self.player = -1
-            print(self.player)
             new = self.game.getNextState(self.board,self.player,col)
             if self.player == -1:
                 self.player = 2
-            
             self.board = new[0]
             #print(str(r)+" "+str(col))
             if r == -1:
@@ -137,7 +140,6 @@ def rein():
     
     info = Info(root)
     info.grid(row=0, column=0)
-    human = 1
     t = Game(root)
     t.grid(row=1, column=0)
 

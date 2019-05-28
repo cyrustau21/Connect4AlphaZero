@@ -78,10 +78,11 @@ class CheckersGame():
         #print("Current player given is:"+str(player))
         #print(str(self.b.getBoard()))
         if player == -1:
-            player == 2
+            player = 2
         self.b.boardToGame(board,player)
         valids = [0]*self.getActionSize()
         moves = self.b.getLegalMoves()
+        print(str(moves))
         for move in moves:
             #print(move)
             valids[self.moveToAction(move)] = 1
@@ -119,15 +120,10 @@ class CheckersGame():
         """
         print(board)
         if player == -1:
-            board = np.asarray(player*board)
+            board = np.asarray(board)
             board = np.flipud(board)
             board = np.fliplr(board)
-            b = np.zeros((8,8))
-            shape = board.shape
-            for r in range(shape[0]):
-                for c in range(shape[1]):
-                    b[r][c] = board[r][c]
-            return b
+            return list(board)
         else:        
             return board
 

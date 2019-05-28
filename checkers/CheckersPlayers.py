@@ -19,7 +19,7 @@ class HumanCheckersPlayer():
 
     def play(self, board):
         # display(board)
-        print(self.game.getLegalMoves(board))
+        print(self.game.getBoard().getLegalMoves(board))
         valids = self.game.getValidMoves(board,self.game.curPlayer())
         while True:
             print("Enter your starting piece (row, column)")
