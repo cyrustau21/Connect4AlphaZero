@@ -53,7 +53,7 @@ class Game(Canvas):
         self.p = []
         self.perm = True
         n1 = NNet(self.game)
-        n1.load_checkpoint('./checkpoints','best.pth.tar')
+        n1.load_checkpoint('./checkpoint','best.pth.tar')
         args1 = dotdict({'numMCTSSims': 50, 'cpuct':1.0})
         mcts1 = MCTS(self.game, n1, args1)
         self.n1p = lambda x: np.argmax(mcts1.getActionProb(x, temp=0))
