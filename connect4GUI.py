@@ -119,10 +119,10 @@ class Game(Canvas):
                     info.t.config(text="AI wins")
                 self.perm = False
             elif result == -1:
-                if result == self.ai_ind:
-                    info.t.config(text="AI wins")
-                else:
+                if result == self.humanPlayer:
                     info.t.config(text="Human wins")
+                else:
+                    info.t.config(text="AI wins")
                 self.perm = False
             elif result == -.5:
                 info.t.config(text="Tie")
