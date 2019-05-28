@@ -103,24 +103,31 @@ class Game(Canvas):
             
             if self.player == 1:
                 self.player = 2
-                info.t.config(text="Red's Turn")
+                self.setPlayer()
                 self.color = "red"
 
             elif self.player == 2:
                 self.player = 1
-                info.t.config(text="Yellow's Turn")
+                self.setPlayer()
                 self.color = "yellow"
             print(str(self.board))
-            result = self.game.getGameEnded(self.board,1)
+            result = self.game.getGameEnded(self.board,self.humanPlayer)
             if result == 1:
-                info.t.config(text="Yellow wins")
+                info.t.config(text="Human wins")
                 self.perm = False
             elif result == -1:
-                info.t.config(text="Red wins")
+                info.t.config(text="AI wins")
                 self.perm = False
             elif result == -.5:
                 info.t.config(text="Tie")
-                self.perm = False 
+                self.perm = False
+
+    def setPlayer(self):
+        if self.player == self.ai_player:
+            info.t.config(text="AI's turn")
+        else:
+           info.t.config(text="Human's turn") 
+    
 
 
 root = Tk()
