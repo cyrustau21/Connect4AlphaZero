@@ -43,7 +43,7 @@ class Game(Canvas):
         while not self.humanPlayer == 1 and not self.humanPlayer == 2:
             print("Should the human go first or second? Enter 1 or 2")
             self.humanPlayer = int(input())
-        info.t.config(text="Yellow's turn")
+        self.setPlayer()
         if self.humanPlayer == 1:
             self.ai_player = 2
         else:
